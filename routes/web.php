@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Product;
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,6 +22,9 @@ Route::middleware('auth')->group(function () {
 Route::get('/products', function () {
     $products = Product::with('category')->latest('id')->paginate(12);
     return view('products.index', compact('products'));
-}); 
+})->name('products.index');
+
+Route::get('/products/{product}', [ProductController::class, 'show'])
+     ->name('products.show');
 
 require __DIR__.'/auth.php';

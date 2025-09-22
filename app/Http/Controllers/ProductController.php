@@ -13,4 +13,11 @@ class ProductController extends Controller
 
         return view('products.index', compact('products'));
     }
+
+    public function show(\App\Models\Product $product)
+    {
+        $product->load('category');
+        return view('products.show', compact('product'));
+    }
+
 }
