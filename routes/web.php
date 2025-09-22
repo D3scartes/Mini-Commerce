@@ -19,10 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/products', function () {
-    $products = Product::with('category')->latest('id')->paginate(12);
-    return view('products.index', compact('products'));
-})->name('products.index');
+Route::get('/products', [ProductController::class, 'index'])
+     ->name('products.index');
 
 Route::get('/products/{product}', [ProductController::class, 'show'])
      ->name('products.show');

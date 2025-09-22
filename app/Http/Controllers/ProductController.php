@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Product;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // eager load kategori, urut terbaru, paginate 12
-        $products = Product::with('category')->latest('id')->paginate(12);
+        $query = Product::with('category');
+
+        // 🔍 Search
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->latest('id')->paginate(12);
 
         return view('products.index', compact('products'));
     }
