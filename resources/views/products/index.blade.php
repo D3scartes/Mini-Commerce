@@ -3,29 +3,44 @@
     <h1 class="text-2xl font-bold mb-4">Produk</h1>
     
     <form method="GET" action="{{ route('products.index') }}" class="mb-4">
-      <input type="text" name="search" value="{{ request('search') }}"
-            placeholder="Cari produk..." class="border p-2 rounded">
-      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
-          Cari
+      <input
+        type="text"
+        name="search"
+        value="{{ request('search') }}"
+        placeholder="Cari produk..."
+        class="border p-2 rounded"
+      >
+      <button
+        type="submit"
+        class="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Cari
       </button>
+
+      {{-- Tampil hanya untuk admin --}}
       @auth
-        @if (auth()->user()->email === 'admin@ais.com')
-          <a href="{{ route('products.create') }}"
-            class="inline-flex items-center px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
-              Tambah Produk
-          </a>
+        @if (auth()->user()->isAdmin())
+        <a
+          href="{{ route('products.create') }}"
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 align-middle inline-block"
+        >
+          Tambah Produk
+        </a>
         @endif
       @endauth
     </form>
+
     @if ($products->count())
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         @foreach ($products as $p)
-          <a href="{{ route('products.show', $p) }}"
-            class="block rounded-2xl p-4 shadow hover:shadow-md transition">
+          <a
+            href="{{ route('products.show', $p) }}"
+            class="block rounded-2xl p-4 shadow hover:shadow-md transition"
+          >
             <div class="text-sm text-gray-500">{{ $p->category->name ?? '-' }}</div>
             <div class="font-semibold">{{ $p->name }}</div>
             <div class="mt-1 text-sm">Stok: {{ $p->stock }}</div>
-            <div class="mt-2 font-bold">Rp {{ number_format($p->price,0,',','.') }}</div>
+            <div class="mt-2 font-bold">Rp {{ number_format($p->price, 0, ',', '.') }}</div>
           </a>
         @endforeach
       </div>
@@ -36,8 +51,5 @@
     @else
       <p class="text-gray-600">Belum ada produk.</p>
     @endif
-
   </div>
-
-
 </x-app-layout>
