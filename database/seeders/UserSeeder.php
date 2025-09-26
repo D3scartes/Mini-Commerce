@@ -11,7 +11,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Buat user pembeli
-        User::create([
+        User::updateOrCreate([
             'name' => 'Test Buyer',
             'email' => 'buyer@example.com',
             'password' => Hash::make('password123'),
@@ -19,11 +19,18 @@ class UserSeeder extends Seeder
         ]);
 
         // Buat user penjual
-        User::create([
+        User::updateOrCreate([
             'name' => 'Test Seller',
             'email' => 'seller@example.com',
             'password' => Hash::make('password123'),
             'role' => 'seller',
+        ]);
+
+        User::updateOrCreate([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password123'),
+            'role' => 'admin',
         ]);
 
         // Tambahkan beberapa user dummy (optional, pakai factory)

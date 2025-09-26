@@ -9,9 +9,9 @@ class AdminOnly
 {
     public function handle(Request $request, Closure $next)
     {
-        if (! $request->user()?->isAdmin()) {
-            abort(403); // Forbidden
+        if (auth()->check() && in_array(auth()->user()->role, ['admin'], true)) {
+            return $next($request);
         }
-        return $next($request);
+        abort(403); // Forbidden
     }
 }

@@ -17,17 +17,6 @@
         Cari
       </button>
 
-      {{-- Tampil hanya untuk admin --}}
-      @auth
-        @if (auth()->user()->isAdmin())
-        <a
-          href="{{ route('products.create') }}"
-          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 align-middle inline-block"
-        >
-          Tambah Produk
-        </a>
-        @endif
-      @endauth
     </form>
 
     @if ($products->count())

@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\ProductController  as AdminProductController;
 
 // Auth routes (Breeze)
 require __DIR__ . '/auth.php';
@@ -20,10 +22,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
 
     // Admin-only untuk membuat produk 
-    Route::middleware('admin')->group(function () {
-        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-        Route::post('/products',        [ProductController::class, 'store'])->name('products.store');
-    });
+    Route::middleware('admin')
+        ->prefix('admin')->name('admin.')
+        ->group(function () {
+            // CRUD Category (tanpa show)
+            Route::resource('categories', AdminCategoryController::class)->except('show');
+
+            // CRUD Product (tanpa show)
+            Route::resource('products',  AdminProductController::class)->except('show');
+        });
 
     // Profile
     Route::get('/profile',  [ProfileController::class, 'edit'])->name('profile.edit');
