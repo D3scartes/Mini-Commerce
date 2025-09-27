@@ -37,3 +37,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile',[ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile',[ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Route utama admin
+Route::get('admin/products/create', [\App\Http\Controllers\Admin\ProductController::class, 'create'])
+    ->middleware('admin')
+    ->name('admin.products.create');
+
+Route::post('admin/products', [\App\Http\Controllers\Admin\ProductController::class, 'store'])
+    ->middleware('admin')
+    ->name('admin.products.store');
+
+// Alias: biar route('products.create') tetap jalan, tapi diarahkan ke admin
+Route::get('products/create', function () {
+    return redirect()->route('admin.products.create');
+})->middleware(['auth','verified','admin'])->name('products.create');
+
+Route::post('products', function (\Illuminate\Http\Request $request) {
+    return redirect()->route('admin.products.store');
+})->middleware(['auth','verified','admin'])->name('products.store');

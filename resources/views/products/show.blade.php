@@ -2,6 +2,15 @@
   <div class="max-w-4xl mx-auto p-6">
     <a href="{{ route('products.index') }}" class="text-sm underline">&larr; Kembali</a>
     <h1 class="mt-2 text-2xl font-bold">{{ $product->name }}</h1>
+    @auth
+      @if (auth()->user()->isAdmin())
+        <a href="{{ route('admin.products.edit', $product) }}"
+           class="inline-flex items-center px-4 py-2 rounded bg-amber-500 text-white hover:bg-amber-600">
+          Edit Produk
+        </a>
+      @endif
+    @endauth
+
     <p class="text-gray-500">{{ $product->category->name ?? '-' }}</p>
 
     <div class="mt-4 rounded-2xl p-4 shadow">
