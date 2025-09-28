@@ -71,9 +71,8 @@
         </div>
       </div>
 
-      {{-- Active (hidden 0 + checkbox 1) --}}
+      {{-- Tampilkan (checkbox) --}}
       <div class="mt-4">
-        <span class="block text-sm mb-1">Active</span>
         <input type="hidden" name="is_active" value="0">
         <label class="inline-flex items-center gap-2">
           <input
@@ -82,9 +81,11 @@
             value="1"
             @checked(old('is_active', 1))
           >
-          <span>Active</span>
+          <span>Tampilkan</span>
         </label>
       </div>
+
+
 
       {{-- Description --}}
       <label for="description" class="block text-sm mb-1 mt-4">Description</label>

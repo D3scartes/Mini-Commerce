@@ -34,7 +34,7 @@ class ProductController extends Controller
         $data['is_active'] = (bool)($data['is_active'] ?? true);
 
         \App\Models\Product::create($data);
-        return redirect()->route('admin.products.index')->with('success','Product created');
+        return redirect()->route('admin.products.index')->with('success','Produk berhasil ditambahkan!');
     }
 
     public function edit(\App\Models\Product $product)
