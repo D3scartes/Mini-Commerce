@@ -6,7 +6,18 @@
       <a href="{{ route('admin.products.index') }}" class="text-sm underline">Back</a>
     </div>
 
-    <form method="POST" action="{{ route('admin.products.store') }}" novalidate>
+  <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" novalidate>
+      {{-- Photo --}}
+      <label for="photo" class="block text-sm mb-1 mt-4">Photo</label>
+      <input
+        id="photo"
+        name="photo"
+        type="file"
+        accept="image/*"
+        required
+        class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer"
+      >
+      @error('photo')<div class="text-sm text-red-600 mt-1">{{ $message }}</div>@enderror
       @csrf
 
       {{-- Name --}}

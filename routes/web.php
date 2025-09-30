@@ -1,57 +1,37 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-use App\Http\Controllers\Admin\ProductController  as AdminProductController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use Illuminate\Support\Facades\Route;
 
-// Auth routes (Breeze)
-require __DIR__ . '/auth.php';
+Route::get('/', [ProductController::class, 'index'])->name('home');
 
-// Paksa redirectnya ke product, karna guest bisa langsung liat produk
-Route::redirect('/', '/products');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Katalog PRODUK (PUBLIK)
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Produk routes
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
+// Cart routes
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
 
-// Beberapa page yg harus login
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('/dashboard', 'dashboard')->name('dashboard');
 
-    // Admin-only untuk membuat produk 
-    Route::middleware('admin')
-        ->prefix('admin')->name('admin.')
-        ->group(function () {
-            // CRUD Category (tanpa show)
-            Route::resource('categories', AdminCategoryController::class)->except('show');
-
-            // CRUD Product (tanpa show)
-            Route::resource('products',  AdminProductController::class)->except('show');
-        });
-
-    // Profile
-    Route::get('/profile',  [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile',[ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile',[ProfileController::class, 'destroy'])->name('profile.destroy');
+// Admin routes (auth + admin middleware assumed on controller)
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('products', AdminProductController::class);
 });
 
-// Route utama admin
-Route::get('admin/products/create', [\App\Http\Controllers\Admin\ProductController::class, 'create'])
-    ->middleware('admin')
-    ->name('admin.products.create');
-
-Route::post('admin/products', [\App\Http\Controllers\Admin\ProductController::class, 'store'])
-    ->middleware('admin')
-    ->name('admin.products.store');
-
-// Alias: biar route('products.create') tetap jalan, tapi diarahkan ke admin
-Route::get('products/create', function () {
-    return redirect()->route('admin.products.create');
-})->middleware(['auth','verified','admin'])->name('products.create');
-
-Route::post('products', function (\Illuminate\Http\Request $request) {
-    return redirect()->route('admin.products.store');
-})->middleware(['auth','verified','admin'])->name('products.store');
+require __DIR__.'/auth.php';

@@ -26,13 +26,6 @@ class UserSeeder extends Seeder
             'role' => 'seller',
         ]);
 
-        User::updateOrCreate([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password123'),
-            'role' => 'admin',
-        ]);
-
         // Tambahkan beberapa user dummy (optional, pakai factory)
         User::factory(5)->create();
     }

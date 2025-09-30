@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -56,8 +58,10 @@ class ProductController extends Controller
 
     public function create()
     {
-        // batasi hanya admin sederhana (ganti ke policy/middleware nanti)
-        abort_unless(auth()->user()?->email === 'admin@ais.com', 403);
+    // batasi hanya admin sederhana (ganti ke policy/middleware nanti)
+    // gunakan facade Auth jika static analysis error
+        $user = Auth::user();
+        abort_unless($user?->email === 'admin@ais.com', 403);
 
         $categories = Category::orderBy('name')->get(['id','name']);
         return view('products.create', compact('categories'));
@@ -65,7 +69,8 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        abort_unless(auth()->user()?->email === 'admin@ais.com', 403);
+        $user = Auth::user();
+        abort_unless($user?->email === 'admin@ais.com', 403);
 
         $data = $request->validate([
             'name'        => ['required','string','max:120'],
@@ -84,6 +89,6 @@ class ProductController extends Controller
 
         return redirect()
             ->route('products.show', $product)
-            ->with('success', 'Produk berhasil ditambahkan!');
+            ->with('success', 'Product created successfully.');
     }
 }

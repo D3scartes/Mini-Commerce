@@ -11,7 +11,7 @@ class Product extends Model
 
     // kolom yang boleh diisi mass-assignment
     protected $fillable = [
-        'category_id', 'name', 'price', 'stock', 'is_active', 'description',
+        'category_id', 'name', 'price', 'stock', 'is_active', 'description', 'photo',
     ];
 
     // casting tipe data

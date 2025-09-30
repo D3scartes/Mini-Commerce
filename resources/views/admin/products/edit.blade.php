@@ -1,108 +1,79 @@
 <x-app-layout>
-  <div class="max-w-2xl mx-auto p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h1 class="text-2xl font-bold">Edit Product</h1>
-      <a href="{{ route('admin.products.index') }}" class="text-sm underline">Back</a>
-    </div>
+  <div class="max-w-3xl mx-auto p-6">
+    
+    <!-- Judul -->
+    <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+      Edit Produk
+    </h1>
 
-    <form method="POST" action="{{ route('admin.products.update', $product) }}" novalidate>
+    <!-- Form Edit Produk -->
+    <form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data" class="space-y-5">
       @csrf
       @method('PUT')
 
-      {{-- Name --}}
-      <label for="name" class="block text-sm mb-1">Name</label>
-      <input
-        id="name"
-        name="name"
-        value="{{ old('name', $product->name) }}"
-        class="border rounded-lg w-full px-3 py-2"
-        required
-        maxlength="120"
-        autofocus
-      >
-      @error('name')<div class="text-sm text-red-600 mt-1">{{ $message }}</div>@enderror
-
-      {{-- Category --}}
-      <label for="category_id" class="block text-sm mb-1 mt-4">Category</label>
-      <select
-        id="category_id"
-        name="category_id"
-        class="border rounded-lg w-full px-3 py-2"
-        required
-      >
-        <option value="">-- pilih --</option>
-        @foreach ($categories as $c)
-          <option value="{{ $c->id }}" @selected(old('category_id', $product->category_id) == $c->id)>
-            {{ $c->name }}
-          </option>
-        @endforeach
-      </select>
-      @error('category_id')<div class="text-sm text-red-600 mt-1">{{ $message }}</div>@enderror
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        {{-- Price --}}
-        <div>
-          <label for="price" class="block text-sm mb-1">Price</label>
-          <input
-            id="price"
-            name="price"
-            type="number"
-            min="0"
-            step="1"
-            value="{{ old('price', $product->price) }}"
-            class="border rounded-lg w-full px-3 py-2"
-            required
-          >
-          @error('price')<div class="text-sm text-red-600 mt-1">{{ $message }}</div>@enderror
-        </div>
-
-        {{-- Stock --}}
-        <div>
-          <label for="stock" class="block text-sm mb-1">Stock</label>
-          <input
-            id="stock"
-            name="stock"
-            type="number"
-            min="0"
-            step="1"
-            value="{{ old('stock', $product->stock) }}"
-            class="border rounded-lg w-full px-3 py-2"
-            required
-          >
-          @error('stock')<div class="text-sm text-red-600 mt-1">{{ $message }}</div>@enderror
-        </div>
+      <!-- Nama Produk -->
+      <div>
+        <label class="block font-medium text-gray-700 dark:text-gray-200">Nama Produk</label>
+        <input type="text" name="name" value="{{ old('name', $product->name) }}"
+          class="w-full mt-1 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-blue-500 focus:border-blue-500">
       </div>
 
-      {{-- Active (hidden 0 + checkbox 1) --}}
-      <div class="mt-4">
-        <span class="block text-sm mb-1">Active</span>
-        <input type="hidden" name="is_active" value="0">
-        <label class="inline-flex items-center gap-2">
-          <input
-            type="checkbox"
-            name="is_active"
-            value="1"
-            @checked(old('is_active', (int) $product->is_active))
-          >
-          <span>Active</span>
-        </label>
+      <!-- Kategori -->
+      <div>
+        <label class="block font-medium text-gray-700 dark:text-gray-200">Kategori</label>
+        <select name="category_id"
+          class="w-full mt-1 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-blue-500 focus:border-blue-500">
+          @foreach ($categories as $cat)
+            <option value="{{ $cat->id }}" {{ $product->category_id == $cat->id ? 'selected' : '' }}>
+              {{ $cat->name }}
+            </option>
+          @endforeach
+        </select>
       </div>
 
-      {{-- Description --}}
-      <label for="description" class="block text-sm mb-1 mt-4">Description</label>
-      <textarea
-        id="description"
-        name="description"
-        rows="4"
-        class="border rounded-lg w-full px-3 py-2"
-        maxlength="1000"
-      >{{ old('description', $product->description) }}</textarea>
-      @error('description')<div class="text-sm text-red-600 mt-1">{{ $message }}</div>@enderror
+      <!-- Harga -->
+      <div>
+        <label class="block font-medium text-gray-700 dark:text-gray-200">Harga</label>
+        <input type="number" name="price" value="{{ old('price', $product->price) }}"
+          class="w-full mt-1 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-blue-500 focus:border-blue-500">
+      </div>
 
-      <div class="mt-5">
-        <button type="submit" class="px-4 py-2 bg-gray-900 text-white rounded-lg">Update</button>
-        <a href="{{ route('admin.products.index') }}" class="ms-3 underline">Cancel</a>
+      <!-- Stok -->
+      <div>
+        <label class="block font-medium text-gray-700 dark:text-gray-200">Stok</label>
+        <input type="number" name="stock" value="{{ old('stock', $product->stock) }}"
+          class="w-full mt-1 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <!-- Deskripsi -->
+      <div>
+        <label class="block font-medium text-gray-700 dark:text-gray-200">Deskripsi</label>
+        <textarea name="description" rows="4"
+          class="w-full mt-1 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-blue-500 focus:border-blue-500">{{ old('description', $product->description) }}</textarea>
+      </div>
+
+      <!-- Foto Produk -->
+      <div>
+        <label class="block font-medium text-gray-700 dark:text-gray-200">Foto Produk</label>
+        <input type="file" name="photo"
+          class="mt-1 block w-full text-sm text-gray-700 dark:text-gray-200 dark:bg-gray-800 border rounded cursor-pointer focus:outline-none">
+        @if ($product->photo)
+          <img src="{{ asset('storage/'.$product->photo) }}" alt="Foto Produk" class="h-24 mt-3 rounded border">
+        @endif
+      </div>
+
+      <!-- Tombol Aksi -->
+      <div class="flex items-center justify-end gap-3">
+        <a href="{{ route('admin.products.index') }}"
+          class="px-4 py-2 rounded bg-gray-500 text-white hover:bg-gray-600 transition">
+          Cancel
+        </a>
+        <button type="submit"
+          class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition">
+          Update
+        </button>
       </div>
     </form>
+
   </div>
 </x-app-layout>
