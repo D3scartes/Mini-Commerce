@@ -94,10 +94,11 @@
         <div class="text-lg font-bold text-gray-900 dark:text-white">
           Total: Rp {{ number_format($total,0,',','.') }}
         </div>
-        <a href="#"
-           class="px-5 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
-          Lanjut ke Payment
-        </a>
+        <a href="{{ route('orders.payment') }}"
+   class="px-5 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+  Lanjut ke Payment
+</a>
+
       </div>
     @endif
   </div>

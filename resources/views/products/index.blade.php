@@ -8,7 +8,7 @@
       </div>
     @endif
 
-    {{-- bar atas: kiri = cari, kanan = aksi admin --}}
+    {{-- bar atas: kiri = cari --}}
     <div class="mb-4 flex items-center justify-between gap-2">
       {{-- kiri: form cari --}}
       <form method="GET" action="{{ route('products.index') }}" class="flex items-center gap-3">
@@ -48,18 +48,6 @@
           Cari
         </button>
       </form>
-
-      {{-- kanan: tombol admin --}}
-      @auth
-        @if (auth()->user()->isAdmin())
-          <div class="flex items-center gap-2">
-            <a href="{{ route('admin.products.index') }}"
-              class="inline-flex items-center px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 ms-2">
-              Kelola Produk
-            </a>
-          </div>
-        @endif
-      @endauth
     </div>
 
     @if ($products->count())

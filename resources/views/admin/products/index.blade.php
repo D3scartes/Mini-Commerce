@@ -1,7 +1,9 @@
 <x-app-layout>
   <div class="max-w-7xl mx-auto p-6">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">Kelola Produk</h1>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+        Kelola Produk
+      </h1>
       <a href="{{ route('admin.products.create') }}"
          class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
         Tambah Produk
@@ -10,7 +12,7 @@
 
     {{-- Notifikasi --}}
     @if (session('success'))
-      <div class="mb-4 p-3 rounded bg-green-100 text-green-700">
+      <div class="mb-4 p-3 rounded bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
         {{ session('success') }}
       </div>
     @endif
@@ -33,21 +35,20 @@
             </div>
 
             <div class="flex gap-2 mt-3">
-  <a href="{{ route('admin.products.edit', $p) }}"
-     class="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 text-center">
-    Edit
-  </a>
-  <form action="{{ route('admin.products.destroy', $p) }}" method="POST"
-        onsubmit="return confirm('Yakin hapus produk ini?')">
-    @csrf
-    @method('DELETE')
-    <button type="submit"
-            class="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600">
-      Delete
-    </button>
-  </form>
-</div>
-
+              <a href="{{ route('admin.products.edit', $p) }}"
+                 class="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 text-center">
+                Edit
+              </a>
+              <form action="{{ route('admin.products.destroy', $p) }}" method="POST"
+                    onsubmit="return confirm('Yakin hapus produk ini?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                        class="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600">
+                  Delete
+                </button>
+              </form>
+            </div>
           </div>
         @endforeach
       </div>

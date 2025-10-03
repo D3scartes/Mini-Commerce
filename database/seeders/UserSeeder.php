@@ -10,23 +10,19 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Buat user pembeli
-        User::updateOrCreate([
-            'name' => 'Test Buyer',
-            'email' => 'buyer@example.com',
-            'password' => Hash::make('password123'),
+        // Buat user buyer contoh
+        User::updateOrCreate(
+            ['email' => 'buyer@example.com'],
+            [
+                'name' => 'Test Buyer',
+                'password' => Hash::make('password123'),
+                'role' => 'buyer',
+            ]
+        );
+
+        // Tambahkan beberapa user dummy (semua role buyer)
+        User::factory(5)->create([
             'role' => 'buyer',
         ]);
-
-        // Buat user penjual
-        User::updateOrCreate([
-            'name' => 'Test Seller',
-            'email' => 'seller@example.com',
-            'password' => Hash::make('password123'),
-            'role' => 'seller',
-        ]);
-
-        // Tambahkan beberapa user dummy (optional, pakai factory)
-        User::factory(5)->create();
     }
 }

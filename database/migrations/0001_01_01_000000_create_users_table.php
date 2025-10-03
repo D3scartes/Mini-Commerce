@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // Tambahin role, default buyer
+            $table->string('role')->default('buyer');
+
             $table->rememberToken();
             $table->timestamps();
         });
