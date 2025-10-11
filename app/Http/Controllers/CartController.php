@@ -20,6 +20,7 @@ class CartController extends Controller
         return view('cart.index', compact('cart', 'total'));
     }
 
+    //Buat nambah barang ke keranjang
     public function add(Request $request, \App\Models\Product $product)
     {
         if (!Auth::check()) {
@@ -65,6 +66,7 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', 'Produk ditambahkan ke keranjang.');
     }
 
+    // Fungsi increment biar bisa pake ajax
     public function increment(Request $request, \App\Models\Cart $cart)
     {
         // Pastikan cart item milik user yang login
@@ -88,14 +90,47 @@ class CartController extends Controller
 
         // hitung subtotal & total
         $subtotal = $cart->qty * (float) $product->price;
+        $all = \App\Models\Cart::with('product')->where('user_id', Auth::id())->get();
+        $cartTotal = $all->sum(fn($i) => $i->qty * (float) $i->product->price);
 
         return response()->json([
             'ok'        => true,
             'qty'       => $cart->qty,
             'subtotal'  => $subtotal,
+            'cart_total'  => $cartTotal,
             'reached_max' => $cart->qty >= $product->stock,
         ]);
     }
+
+    // Fungsi decrement buat ajax
+   public function decrement(Request $request, \App\Models\Cart $cart)
+    {
+        if ($cart->user_id !== Auth::id()) abort(403);
+
+        $product = $cart->product()->firstOrFail();
+
+        $removed = false;
+        if ($cart->qty > 1) {
+            $cart->decrement('qty');
+        } else {
+            $cart->delete();  // qty==1 ⇒ hapus
+            $removed = true;
+        }
+
+        // hitung total
+        $all = \App\Models\Cart::with('product')->where('user_id', Auth::id())->get();
+        $cartTotal = $all->sum(fn($i) => $i->qty * (float) $i->product->price);
+
+        return response()->json([
+            'ok'           => true,
+            'removed'      => $removed,
+            'qty'          => $removed ? 0 : $cart->qty,
+            'subtotal'     => $removed ? 0 : $cart->qty * (float) $product->price,
+            'cart_total'   => $cartTotal,
+            'can_increment'=> !$removed && $cart->qty < $product->stock,
+        ]);
+    }
+
 
     public function remove($id)
     {
