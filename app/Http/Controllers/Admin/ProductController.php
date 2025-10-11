@@ -32,7 +32,7 @@ class ProductController extends Controller
             'stock'       => ['required','integer','min:0'],
             'is_active'   => ['sometimes','boolean'],
             'description' => ['nullable','string','max:1000'],
-            'photo'       => ['required','image','max:2048'],
+            'photo'       => ['required','image','max:2048','mimes:jpg,jpeg,png,webp'],
         ]);
         $data['is_active'] = (bool)($data['is_active'] ?? true);
 
@@ -60,7 +60,7 @@ class ProductController extends Controller
             'stock'       => ['required','integer','min:0'],
             'is_active'   => ['sometimes','boolean'],
             'description' => ['nullable','string','max:1000'],
-            'photo'       => ['nullable','image','max:2048'],
+            'photo'       => ['nullable','image','max:2048','mimes:jpg,jpeg,png,webp'],
         ]);
         $data['is_active'] = (bool)($data['is_active'] ?? $product->is_active);
 

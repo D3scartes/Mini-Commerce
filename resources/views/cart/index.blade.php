@@ -59,8 +59,7 @@
                       @csrf
                       @method('PATCH')
                       <input type="hidden" name="action" value="increase">
-                      <button type="submit"
-                              class="px-2 py-1 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-400 dark:hover:bg-gray-600">
+                      <button type="submit" name="action" value="increase" @if($item->qty >= $item->product->stock) disabled @endif>
                         +
                       </button>
                     </form>

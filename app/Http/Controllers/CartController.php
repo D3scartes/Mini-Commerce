@@ -20,27 +20,81 @@ class CartController extends Controller
         return view('cart.index', compact('cart', 'total'));
     }
 
-    public function add(Product $product)
+    public function add(Request $request, \App\Models\Product $product)
     {
-        if (!auth()->check()) {
-            return redirect()->guest(route('login'))
-                ->with('warning', 'Silakan login untuk menambahkan produk ke keranjang.');
+        if (!Auth::check()) {
+            return $request->wantsJson()
+                ? response()->json(['message' => 'Unauthenticated'], 401)
+                : redirect()->guest(route('login'))->with('warning', 'Silakan login untuk menambahkan produk ke keranjang.');
         }
-        $cartItem = Cart::where('user_id', Auth::id())
-            ->where('product_id', $product->id)
-            ->first();
 
-        if ($cartItem) {
-            $cartItem->increment('qty');
-        } else {
-            Cart::create([
-                'user_id' => Auth::id(),
-                'product_id' => $product->id,
-                'qty' => 1,
+        $reqQty = (int) $request->input('qty', 1);
+        $reqQty = max(1, $reqQty);
+
+        $cartItem = \App\Models\Cart::firstOrNew([
+            'user_id' => Auth::id(),
+            'product_id' => $product->id,
+        ]);
+
+        $current  = (int) ($cartItem->qty ?? 0);
+        $desired  = $current + $reqQty;
+
+        if ($desired > $product->stock) {
+            // clamp ke stok, atau tolak—di sini kita tolak dgn 422 agar jelas di AJAX
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'ok'      => false,
+                    'message' => 'Jumlah melebihi stok',
+                    'max'     => $product->stock,
+                    'current' => $current,
+                ], 422);
+            }
+            return back()->withErrors(['qty' => "Maksimal {$product->stock}"])->withInput();
+        }
+
+        $cartItem->qty = $desired;
+        $cartItem->save();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'ok'  => true,
+                'qty' => $cartItem->qty,
             ]);
         }
 
         return redirect()->route('cart.index')->with('success', 'Produk ditambahkan ke keranjang.');
+    }
+
+    public function increment(Request $request, \App\Models\Cart $cart)
+    {
+        // Pastikan cart item milik user yang login
+        if ($cart->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $product = $cart->product()->firstOrFail();
+        $desired = $cart->qty + 1;
+
+        if ($desired > $product->stock) {
+            return response()->json([
+                'ok'      => false,
+                'message' => 'Sudah mencapai stok maksimum',
+                'qty'     => $cart->qty,
+                'max'     => $product->stock,
+            ], 422);
+        }
+
+        $cart->increment('qty');
+
+        // hitung subtotal & total
+        $subtotal = $cart->qty * (float) $product->price;
+
+        return response()->json([
+            'ok'        => true,
+            'qty'       => $cart->qty,
+            'subtotal'  => $subtotal,
+            'reached_max' => $cart->qty >= $product->stock,
+        ]);
     }
 
     public function remove($id)
@@ -55,25 +109,37 @@ class CartController extends Controller
 
         return redirect()->route('cart.index')->with('success', 'Produk dihapus dari keranjang.');
     }
-    public function update(Request $request, $id)
-{
-    $cartItem = Cart::where('user_id', Auth::id())->where('id', $id)->first();
 
-    if ($cartItem) {
+    public function update(Request $request, $id)
+    {
+        $cartItem = Cart::with('product')
+            ->where('user_id', Auth::id())
+            ->where('id', $id)
+            ->first();
+
+        if (!$cartItem) {
+            return back()->with('error', 'Item tidak ditemukan.');
+        }
+
         $action = $request->input('action');
 
         if ($action === 'increase') {
+            $desired = $cartItem->qty + 1;
+            if ($desired > $cartItem->product->stock) {
+                // jika mau JSON untuk fetch() juga bisa deteksi via wantsJson()
+                return back()->withErrors(['qty' => 'Sudah mencapai stok maksimum.']);
+            }
             $cartItem->increment('qty');
         } elseif ($action === 'decrease') {
             if ($cartItem->qty > 1) {
                 $cartItem->decrement('qty');
             } else {
-                $cartItem->delete(); // kalau qty 0, hapus
+                $cartItem->delete();
             }
         }
+
+        return back()->with('success', 'Keranjang diperbarui.');
     }
 
-    return redirect()->route('cart.index')->with('success', 'Keranjang diperbarui.');
-}
 
 }
