@@ -22,6 +22,10 @@ class CartController extends Controller
 
     public function add(Product $product)
     {
+        if (!auth()->check()) {
+            return redirect()->guest(route('login'))
+                ->with('warning', 'Silakan login untuk menambahkan produk ke keranjang.');
+        }
         $cartItem = Cart::where('user_id', Auth::id())
             ->where('product_id', $product->id)
             ->first();

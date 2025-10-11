@@ -38,13 +38,24 @@
         </p>
       @endif
 
-      <form class="mt-4" method="POST" action="{{ route('cart.add', $product) }}">
+      @auth
+      <form method="POST" action="{{ route('cart.add', $product) }}">
         @csrf
-        <button type="submit"
-                class="px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-700 dark:bg-blue-600 dark:hover:bg-blue-500">
-          Tambah ke Keranjang
-        </button>
+        <input type="hidden" name="qty" value="1"> {{-- atau input number di halaman detail --}}
+        <button type="submit" class="inline-flex items-center px-4 py-2 rounded-md bg-blue-600 text-white
+                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50
+                transition text-sm font-medium"">Tambah ke Keranjang</button>
       </form>
+      @endauth
+
+      @guest
+      <a href="{{ route('login') }}"
+        class="inline-flex items-center px-4 py-2 rounded-md bg-blue-600 text-white
+                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50
+                transition text-sm font-medium">
+        Login untuk tambah ke keranjang
+      </a>
+      @endguest
     </div>
   </div>
 </x-app-layout>
