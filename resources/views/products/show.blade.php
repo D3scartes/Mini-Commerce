@@ -39,13 +39,16 @@
       @endif
 
       @auth
-      <form method="POST" action="{{ route('cart.add', $product) }}">
-        @csrf
-        <input type="hidden" name="qty" value="1"> {{-- atau input number di halaman detail --}}
-        <button type="submit" class="inline-flex items-center px-4 py-2 rounded-md bg-blue-600 text-white
-                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50
-                transition text-sm font-medium"">Tambah ke Keranjang</button>
-      </form>
+        <form method="POST" action="{{ route('cart.add', $product) }}" class="inline">
+          @csrf
+          <input type="hidden" name="qty" value="1">
+          <button type="submit"
+            class="inline-flex items-center h-10 px-4 rounded-xl bg-blue-600 text-white
+                  hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50
+                  transition text-sm font-medium">
+            Tambah ke Keranjang
+          </button>
+        </form>
       @endauth
 
       @guest
