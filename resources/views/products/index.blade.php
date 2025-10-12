@@ -16,11 +16,14 @@
         {{-- input search --}}
         <input
           type="text"
+          id="search"
           name="search"
           value="{{ request('search') }}"
           placeholder="Cari produk..."
           class="h-10 px-3 py-2 border rounded bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
-        >
+          autocomplete="off"
+        />
+
 
         {{-- filter kategori --}}
         <select name="category"
@@ -51,7 +54,7 @@
     </div>
 
     @if ($products->count())
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         @foreach ($products as $p)
           <a href="{{ route('products.show', $p) }}"
              class="block rounded-2xl p-4 shadow hover:shadow-md transition bg-white dark:bg-gray-800">
@@ -75,4 +78,28 @@
       <p class="text-gray-600 dark:text-gray-300">Belum ada produk.</p>
     @endif
   </div>
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('search');
+  const productGrid = document.getElementById('product-grid');
+
+  if (!searchInput || !productGrid) return;
+
+  let timer;
+  searchInput.addEventListener('input', function() {
+    const keyword = this.value.trim();
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      fetch(`/ajax/products/search?q=${encodeURIComponent(keyword)}`)
+        .then(res => res.json())
+        .then(data => {
+          productGrid.innerHTML = data.html || '<p class="text-gray-600 dark:text-gray-300">Tidak ada produk ditemukan.</p>';
+        })
+        .catch(err => console.error('Error:', err));
+    }, 300);
+  });
+});
+</script>
+
 </x-app-layout>

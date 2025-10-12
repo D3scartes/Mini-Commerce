@@ -50,6 +50,45 @@ class ProductController extends Controller
         return view('products.index', compact('products', 'categories'));
     }
 
+public function ajaxSearch(Request $request)
+{
+    $q = trim($request->get('q', ''));
+
+    $products = Product::with('category')
+        ->when($q !== '', fn($query) =>
+            $query->where(fn($qq) => $qq
+                ->where('name', 'like', "%{$q}%")
+                ->orWhere('description', 'like', "%{$q}%")
+            )
+        )
+        ->latest('id')
+        ->take(20)
+        ->get();
+
+    // return partial HTML langsung
+    $html = '';
+    foreach ($products as $p) {
+        $html .= '
+        <div class="rounded-2xl p-4 shadow bg-white dark:bg-gray-800 hover:shadow-md transition">
+            <div class="mb-2">
+                <img src="'.($p->photo ? asset('storage/'.$p->photo) : asset('img/default.png')).'" 
+                    alt="Foto Produk"
+                    class="h-32 w-full object-cover rounded-lg border">
+            </div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">'.($p->category->name ?? '-').'</div>
+            <div class="font-semibold text-gray-900 dark:text-gray-100">'.$p->name.'</div>
+            <div class="mt-1 text-sm text-gray-600 dark:text-gray-300">Stok: '.$p->stock.'</div>
+            <div class="mt-2 font-bold text-gray-900 dark:text-gray-100">
+                Rp '.number_format($p->price, 0, ',', '.').'
+            </div>
+        </div>';
+    }
+
+    return response()->json(['html' => $html]);
+}
+
+
+
     public function show(Product $product)
     {
         $product->load('category');

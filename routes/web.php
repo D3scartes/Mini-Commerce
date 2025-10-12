@@ -81,5 +81,7 @@ Route::middleware(['auth', 'verified', 'admin'])
         // Orders (index, show, update)
         Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
     });
+// AJAX Live Search Produk (public/buyer)
+Route::get('/ajax/products/search', [ProductController::class, 'ajaxSearch'])->name('products.ajax.search');
 
 require __DIR__ . '/auth.php';
