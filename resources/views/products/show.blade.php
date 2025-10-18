@@ -6,10 +6,32 @@
     </a>
 
     <div class="mb-4">
-      <img src="{{ $product->photo ? asset('storage/'.$product->photo) : asset('img/default.png') }}"
-           alt="Foto Produk"
-           class="h-64 w-full object-cover rounded-xl border dark:border-gray-700">
+      @php
+        use Illuminate\Support\Facades\Storage;
+
+        // cek file di storage/public
+        $hasPhoto = $product->photo && Storage::disk('public')->exists($product->photo);
+
+        // fallback ke default placeholder
+        $imgUrl = $hasPhoto ? Storage::url($product->photo) : asset('img/default.png');
+      @endphp
+
+      @if($hasPhoto)
+        <img
+          src="{{ $imgUrl }}"
+          alt="{{ $product->name }}"
+          class="h-64 w-full object-cover rounded-xl border-none"
+          loading="lazy"
+        />
+      @else
+        <div class="h-64 w-full flex items-center justify-center
+                    bg-gray-100 dark:bg-gray-700 text-gray-400 text-6xl rounded-xl">
+          🛒
+        </div>
+      @endif
     </div>
+
+
 
     <h1 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ $product->name }}</h1>
 

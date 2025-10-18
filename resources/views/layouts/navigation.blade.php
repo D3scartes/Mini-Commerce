@@ -53,7 +53,10 @@
                             Kelola Kategori
                             </x-nav-link>
                             <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
-                                Pesanan Admin
+                                Kelola Pesanan
+                            </x-nav-link>
+                            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+                                Keranjang Admin
                             </x-nav-link>
                         @endif
                     @endauth

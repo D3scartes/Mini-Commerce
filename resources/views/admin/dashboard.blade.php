@@ -3,7 +3,43 @@
     <h1 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
       Dashboard Admin - Ringkasan Pesanan
     </h1>
+    {{-- Notifikasi sukses --}}
 
+
+    {{-- Statistik Penjualan Bulan Ini --}}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+    {{-- Penjualan Bulan Ini --}}
+    <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h3 class="text-sm text-gray-500 dark:text-gray-400">Penjualan Bulan Ini</h3>
+      <p class="mt-2 text-3xl font-bold text-gray-800 dark:text-gray-100">
+        {{ number_format($salesCount ?? 0) }}
+      </p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        Order Selesai — {{ \Carbon\Carbon::now()->format('F Y') }}
+      </p>
+    </div>
+
+    {{-- Total Pemasukan Bulan Ini --}}
+    <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h3 class="text-sm text-gray-500 dark:text-gray-400">Total Pemasukan Bulan Ini</h3>
+      <p class="mt-2 text-2xl font-semibold text-gray-800 dark:text-gray-100">
+        Rp {{ number_format($salesTotal ?? 0, 0, ',', '.') }}
+      </p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Dari order selesai</p>
+    </div>
+
+    {{-- Total Pesanan Keseluruhan --}}
+    <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h3 class="text-sm text-gray-500 dark:text-gray-400">Total Pesanan Keseluruhan</h3>
+      <p class="mt-2 text-3xl font-bold text-gray-800 dark:text-gray-100">
+        {{ number_format($totalOrders ?? 0) }}
+      </p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Semua status pesanan</p>
+    </div>
+  </div>
+
+
+    {{-- Daftar Pesanan --}}
     @forelse($orders as $order)
       <div class="border rounded-lg p-4 mb-4 dark:border-gray-700 dark:bg-gray-800">
         <div class="flex justify-between items-center">

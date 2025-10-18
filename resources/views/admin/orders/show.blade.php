@@ -10,8 +10,6 @@
       ← Kembali
     </a>
 
-    <h1 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Detail Pesanan #{{ $order->id }}</h1>
-
     <!-- isi detail order seperti sebelumnya -->
   </div>
     {{-- Info Buyer --}}
@@ -45,7 +43,7 @@
         @csrf
         @method('PUT')
         <select name="status"
-                class="border rounded p-2 dark:bg-gray-700 dark:text-white">
+                class="border rounded px-2 w-48 dark:bg-gray-700 dark:text-white">
           <option value="Dikemas" {{ $order->status === 'Dikemas' ? 'selected' : '' }}>Dikemas</option>
           <option value="Dikirim" {{ $order->status === 'Dikirim' ? 'selected' : '' }}>Dikirim</option>
           <option value="Selesai" {{ $order->status === 'Selesai' ? 'selected' : '' }}>Selesai</option>

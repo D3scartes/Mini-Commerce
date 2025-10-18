@@ -59,9 +59,21 @@
           <a href="{{ route('products.show', $p) }}"
              class="block rounded-2xl p-4 shadow hover:shadow-md transition bg-white dark:bg-gray-800">
             <div class="mb-2">
-              <img src="{{ $p->photo ? asset('storage/'.$p->photo) : asset('img/default.png') }}"
-                   alt="Foto Produk"
-                   class="h-32 w-full object-cover rounded-lg border">
+              @if($p->photo && Storage::disk('public')->exists($p->photo))
+                <div class="aspect-[4/3] w-full rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
+                  <img
+                    src="{{ Storage::url($p->photo) }}"
+                    alt="{{ $p->name }}"
+                    class="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              @else
+                <div class="aspect-[4/3] w-full rounded-lg bg-gray-100 dark:bg-gray-700
+                            flex items-center justify-center text-gray-400 text-4xl">
+                  🛒
+                </div>
+              @endif
             </div>
             <div class="text-sm text-gray-500 dark:text-gray-400">{{ $p->category->name ?? '-' }}</div>
             <div class="font-semibold text-gray-900 dark:text-white">{{ $p->name }}</div>

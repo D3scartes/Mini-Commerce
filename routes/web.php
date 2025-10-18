@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
@@ -23,15 +26,35 @@ Route::get('/', [ProductController::class, 'index'])->name('home');
 
 // Dashboard
 Route::get('/dashboard', function () {
+    // jika admin, hitung statistik dan kirim ke view admin.dashboard
     if (Auth::check() && Auth::user()->role === 'admin') {
-        $orders = \App\Models\Order::with('items.product', 'user')
-            ->latest()
-            ->take(10)
-            ->get();
-        return view('admin.dashboard', compact('orders'));
+        $orders = Order::with('items', 'user')->latest()->get();
+
+        $now = Carbon::now();
+        $startOfMonth = $now->copy()->startOfMonth()->startOfDay();
+        $endOfMonth   = $now->copy()->endOfMonth()->endOfDay();
+
+        $salesCount = Order::whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                          ->where('status', 'Selesai')
+                          ->count();
+
+        $salesTotal = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->whereBetween('orders.created_at', [$startOfMonth, $endOfMonth])
+            ->where('orders.status', 'Selesai')
+            ->select(DB::raw('SUM(order_items.qty * products.price) as total'))
+            ->value('total') ?? 0;
+
+        $totalOrders = Order::count();
+
+        return view('admin.dashboard', compact('orders', 'salesCount', 'salesTotal', 'totalOrders'));
     }
-    return view('dashboard'); // buyer biasa
-})->middleware(['auth', 'verified'])->name('dashboard');
+
+    // untuk selain admin
+    return view('dashboard');
+})->name('dashboard');
+
 
 // Profile (user)
 Route::middleware('auth')->group(function () {
