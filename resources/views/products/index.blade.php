@@ -61,12 +61,8 @@
             <div class="mb-2">
               @if($p->photo && Storage::disk('public')->exists($p->photo))
                 <div class="aspect-[4/3] w-full rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
-                  <img
-                    src="{{ Storage::url($p->photo) }}"
-                    alt="{{ $p->name }}"
-                    class="h-full w-full object-cover"
-                    loading="lazy"
-                  />
+                  <img  src="{{ $p->photo ? asset('storage/'.$p->photo) : asset('img/default.png') }}"
+                        alt="{{ $p->name }}" class="h-full w-full object-cover">
                 </div>
               @else
                 <div class="aspect-[4/3] w-full rounded-lg bg-gray-100 dark:bg-gray-700

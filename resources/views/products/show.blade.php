@@ -1,28 +1,21 @@
 <x-app-layout>
   <div class="max-w-4xl mx-auto p-6">
     <a href="{{ route('products.index') }}"
-       class="inline-block px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition mb-4">
-       &larr; Kembali
-    </a>
-
+    class="inline-block px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition mb-4">
+    &larr; Kembali
+  </a>
+  
     <div class="mb-4">
       @php
-        use Illuminate\Support\Facades\Storage;
-
-        // cek file di storage/public
         $hasPhoto = $product->photo && Storage::disk('public')->exists($product->photo);
-
-        // fallback ke default placeholder
-        $imgUrl = $hasPhoto ? Storage::url($product->photo) : asset('img/default.png');
+        $imgUrl   = $hasPhoto ? Storage::url($product->photo) : asset('img/default.png');
       @endphp
 
+
       @if($hasPhoto)
-        <img
-          src="{{ $imgUrl }}"
-          alt="{{ $product->name }}"
-          class="h-64 w-full object-cover rounded-xl border-none"
-          loading="lazy"
-        />
+        <img  src="{{ $product->photo ? asset('storage/'.$product->photo) : asset('img/default.png') }}"
+              alt="{{ $product->name }}" class="h-64 w-full object-cover rounded-xl">
+
       @else
         <div class="h-64 w-full flex items-center justify-center
                     bg-gray-100 dark:bg-gray-700 text-gray-400 text-6xl rounded-xl">

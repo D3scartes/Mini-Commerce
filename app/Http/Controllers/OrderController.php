@@ -37,14 +37,18 @@ class OrderController extends Controller
         }
 
         // Buat order
+        $total = $cart->sum(fn($i) => (float)$i->product->price * (int)$i->qty);
+
         $order = Order::create([
             'user_id' => Auth::id(),
-            'name' => $request->name,
-            'phone' => $request->phone,
+            'name'    => $request->name,
+            'phone'   => $request->phone,
             'address' => $request->address,
             'payment_method' => 'COD',
-            'status' => 'Dikemas',
+            'status'  => 'Dikemas',
+            'total'   => $total,   
         ]);
+
 
         // Buat order_items dan kurangi stok produk
         foreach ($cart as $item) {
