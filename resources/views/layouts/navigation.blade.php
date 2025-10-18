@@ -55,9 +55,6 @@
                             <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                                 Kelola Pesanan
                             </x-nav-link>
-                            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
-                                Keranjang Admin
-                            </x-nav-link>
                         @endif
                     @endauth
                 </div>
