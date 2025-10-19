@@ -21,6 +21,20 @@ class OrderController extends Controller
         return view('orders.index', compact('orders'));
     }
 
+    public function payment()
+    {
+        $cart = \App\Models\Cart::with('product')
+            ->where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->get();
+
+        if ($cart->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
+    }
+
+    $total = $cart->sum(fn($i) => (float)$i->product->price * (int)$i->qty);
+
+    return view('orders.payment', compact('cart', 'total'));
+}
     // Simpan order baru (payment)
     public function store(Request $request)
     {
