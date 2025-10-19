@@ -14,9 +14,8 @@ class AdminSeeder extends Seeder
         // Tambah/hapus admin di array ini saja.
         $admins = [
             ['email' => 'admin@example.com', 'name' => 'Admin User', 'password' => 'password123'],
-            ['email' => 'admin@ais.com',     'name' => 'Admin Ais',  'password' => 'aisyyaaa'],
             // contoh tambah:
-            // ['email' => 'admin2@domain.com', 'name' => 'Admin Dua', 'password' => 'rahasia!'],
+            // ['email' => 'admin2@domain.com', 'name' => 'Admin Dua', 'password' => 'xxxxxx'],
         ];
 
         // Normalisasi (buat jaga-jaga)
